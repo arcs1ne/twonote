@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class SubjectFragment extends Fragment {
         Map<Topic, List<Event>> eByTopic = new HashMap<>();
         List<Topic> topics = new ArrayList<>();
         topics.add(new Topic("Chem","Chemistry :("));
-        eByTopic.put(topics.get(0), Arrays.asList(new Event("ICA")));
+        eByTopic.put(topics.get(0), Arrays.asList(new Event("ICA","chem??","26/07/2004 00:00",30)));
 
         String c = getArguments()==null?null:(String)(getArguments().get("topic"));
         System.out.println(c);
@@ -51,7 +52,7 @@ public class SubjectFragment extends Fragment {
         ll.removeAllViews();
 
         if (current!=null) {
-            for (Event e : eByTopic.get(current)) {
+            for (final Event e : eByTopic.get(current)) {
                 LinearLayout cl = makeCardView(ll, getContext());
                 TextView name = new TextView(getContext());
                 TextView desc = new TextView(getContext());
@@ -60,6 +61,12 @@ public class SubjectFragment extends Fragment {
                 desc.setText(e.description+"\n"+5+" records.");
                 cl.addView(name);
                 cl.addView(desc);
+                ((CardView)cl.getParent()).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        viewEvent(e);
+                    }
+                });
             }
         } else {
             for (final Topic t : topics) {
@@ -85,8 +92,7 @@ public class SubjectFragment extends Fragment {
         Bundle b = new Bundle();
         b.putString("topic",t.name);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this);
-        ft.attach(this);
+        ft.add(this,"events");
         this.setArguments(b);
         ft.commit();
     }
@@ -103,6 +109,15 @@ public class SubjectFragment extends Fragment {
         c.addView(cl);
         ll.addView(c);
         return cl;
+    }
+
+    private void viewEvent(Event e) {
+        Bundle b = new Bundle();
+        b.putString("event",e.name);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.nav_host_fragment,new EventFragment());
+        this.setArguments(b);
+        ft.commit();
     }
 }
 
