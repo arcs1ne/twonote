@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-        android:id="@+id/nav_travel"
-        android:title="@string/title_subject" />
-    <!--android:icon="@drawable/addyourself"-->
-
-
+        android:id="@+id/nav_subject"
+        android:title="@string/title_subject"
+        android:icon="@drawable/ic_baseline_collections_bookmark_24" />
     <item
         android:id="@+id/nav_calendar"
-        android:title="@string/title_calendar" />
-    <!--android:icon="@drawable/addyourself"-->
-
+        android:title="@string/title_calendar"
+        android:icon="@drawable/ic_baseline_date_range_24" />
     <item
         android:id="@+id/nav_focus"
-        android:title="@string/title_focus" />
-
+        android:title="@string/title_focus"
+        android:icon="@drawable/ic_baseline_alarm_24" />
 </menu>
