@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:elevation="4dp"
         android:inputType="time"
-        android:text="00:00"
         android:textSize="48sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
