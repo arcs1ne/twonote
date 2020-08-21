@@ -6,8 +6,8 @@ import java.util.Date;
 public class RecurringEvent extends Event{
     protected int numRecurrence;
 
-    public RecurringEvent(String name, String description, String date, int numRecurrence){
-        super(name, description, date);
+    public RecurringEvent(String name, String description, String date, int duration, int numRecurrence){
+        super(name, description, date, duration);
         this.numRecurrence=numRecurrence;
     }
     public RecurringEvent(String name, String description, int numRecurrence){

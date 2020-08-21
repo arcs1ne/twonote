@@ -10,6 +10,9 @@
     <style name="HeaderBar">
         <item name="android:background">@color/colorPrimary</item>
     </style>
-
+    <style name="AppTheme.Slide">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
 
 </resources>
