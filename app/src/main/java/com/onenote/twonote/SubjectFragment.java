@@ -2,6 +2,7 @@ package com.onenote.twonote;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -91,6 +93,10 @@ public class SubjectFragment extends Fragment {
 
     private static LinearLayout makeCardView(LinearLayout ll, Context ctx) {
         CardView c = new CardView(ctx);
+        c.setClickable(true);
+        TypedValue o = new TypedValue();
+        ctx.getTheme().resolveAttribute(android.R.attr.selectableItemBackground,o,true);
+        c.setForeground(ContextCompat.getDrawable(ctx,o.resourceId));
         LinearLayout cl = new LinearLayout(ctx);
         cl.setPadding(16, 16, 16, 16);
         cl.setOrientation(LinearLayout.VERTICAL);
