@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import java.util.Date;
 import java.text.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,10 +25,11 @@ public class FocusFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        TextView timerView = getActivity().findViewById(R.id.timerView);
+        final TextView timerView = getActivity().findViewById(R.id.timerView);
         TextView eventView = getActivity().findViewById(R.id.eventView); //event name
         TextView subjView = getActivity().findViewById(R.id.subjView); //subject name
-        Event e = Event.correlate(new Date());
+        final Event e = Event.correlate(new Date());
+        if (e==null) return;
         Date deadline = e.getEndDate();
 
         eventView.setText(e.getName());
@@ -34,25 +37,31 @@ public class FocusFragment extends Fragment {
 
         //code for timer thing
         //your code here
-        long diff=1;
-        try {
-            while (diff>0) {
-                diff = e.getEndDate().getTime() - (new Date().getTime());
-                int seconds = (int) (diff / 1000) % 60;
-                int minutes = (int) ((diff / (1000 * 60)) % 60);
-                int hours = (int) ((diff / (1000 * 60 * 60)) % 24);
-                int days = (int) ((diff / (1000 * 60 * 60 * 24)));
-                timerView.setText(days+" days, "+hours+" hours, "+minutes+" minutes and "+seconds+" seconds left before event"+e.getName()+"ends");
-                    try{
-                        Thread.sleep(1000);
+        final Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (getActivity()==null) {
+                    timer.cancel();
+                    return;
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run(){
+                        if (e.getEndDate().before(new Date())) {
+                            timer.cancel();
+                        } else {
+                            long diff = e.getEndDate().getTime() - (new Date().getTime());
+                            int seconds = (int) (diff / 1000) % 60;
+                            int minutes = (int) ((diff / (1000 * 60)) % 60);
+                            int hours = (int) ((diff / (1000 * 60 * 60)) % 24);
+                            int days = (int) ((diff / (1000 * 60 * 60 * 24)));
+                            timerView.setText(String.format("%02d:%02d:%02d",hours,minutes,seconds));
+                        }
                     }
-                    catch (Exception e){
-                            System.out.println(e.getStackTrace());
-                    }
+                });
             }
-        }
-        catch (Exception ex){
-            System.out.println(ex.getStackTrace());
-        }
+        },0,1000);
     }
 }

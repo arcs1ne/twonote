@@ -30,7 +30,7 @@
         app:layout_constraintBottom_toBottomOf="@id/fab2"
         app:layout_constraintEnd_toEndOf="@id/fab2"
         app:maxImageSize="30dp"
-        app:srcCompat="@drawable/ic_noun_sync_3489431" />
+        app:srcCompat="@drawable/ic_baseline_sync_24" />
 
     <ScrollView
         android:layout_width="match_parent"

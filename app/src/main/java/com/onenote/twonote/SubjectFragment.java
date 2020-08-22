@@ -2,7 +2,6 @@ package com.onenote.twonote;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,29 +11,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -166,6 +162,7 @@ public class SubjectFragment extends Fragment {
             case 3:
                 if (resultCode == RESULT_OK) {
                     try {
+                        System.out.println(data);
                         photoURI = data.getData();
                         Event ee = correlate(photoURI);
                     } catch (Exception e) {
@@ -177,14 +174,19 @@ public class SubjectFragment extends Fragment {
     }
     public Event correlate(Uri photoURI) {
         ExifInterface intf = null;
-        try {
-            intf = new ExifInterface(photoURI.getPath());
+        try (InputStream inputStream = getContext().getContentResolver().openInputStream(photoURI)) {
+            intf = new ExifInterface(inputStream);
         } catch(IOException exc) {
             exc.printStackTrace();
         }
 
         if(intf == null) {
             Log.d("TAG","file not found");
+        }
+        if (intf.getAttribute(ExifInterface.TAG_DATETIME)==null) {
+            Toast.makeText(getContext(),"Date/time information not found!",Toast.LENGTH_LONG);
+
+            return null;
         }
         String dateString = intf.getAttribute(ExifInterface.TAG_DATETIME);
 
