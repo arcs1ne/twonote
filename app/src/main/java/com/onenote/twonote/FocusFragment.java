@@ -53,6 +53,7 @@ public class FocusFragment extends Fragment {
                             timer.cancel();
                         } else {
                             long diff = e.getEndDate().getTime() - (new Date().getTime());
+                            System.out.println(diff);
                             int seconds = (int) (diff / 1000) % 60;
                             int minutes = (int) ((diff / (1000 * 60)) % 60);
                             int hours = (int) ((diff / (1000 * 60 * 60)) % 24);

@@ -89,7 +89,7 @@ public class Event implements Comparable{
         }
     }
     public Date getEndDate() {
-        return new Date(date.getTime()+TimeUnit.SECONDS.toMillis(duration * ONE_MINUTE_IN_MILLIS));
+        return new Date(date.getTime()+(duration * ONE_MINUTE_IN_MILLIS));
     }
 
     public void setDuration(int duration) {
