@@ -2,6 +2,7 @@ package com.onenote.twonote;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,18 +47,17 @@ public class SubjectFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         Map<Topic, List<Event>> eByTopic = new HashMap<>();
-        List<Topic> topics = new ArrayList<>();
-        topics.add(new Topic("Chem","Chemistry :("));
+        List<Topic> topics = Topic.initArrayList();
+        //topics.add(new Topic("Chem","Chemistry :("));
         eByTopic.put(topics.get(0), Arrays.asList(new Event("ICA")));
         String c = getArguments()==null?null:(String)(getArguments().get("topic"));
-        System.out.println(c);
+        Log.d("TAG",c);
         Topic current=null;
         for (Topic t: topics) {
             if (t.getName().equals(c)) {
                 current=t;
             }
         }
-
         LinearLayout ll = getActivity().findViewById(R.id.linearLayout);
         ll.removeAllViews();
 

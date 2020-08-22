@@ -1,5 +1,7 @@
 package com.onenote.twonote;
 
+import android.util.Log;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -85,7 +87,14 @@ public class Topic {
             for (QueryDocumentSnapshot doc : snapshot) {
                 String name = doc.get("name", String.class);
                 String desc = doc.get("description", String.class);
-                topicArrayList.add(new Topic(name, desc));
+                int i = 1;
+                ArrayList<Event> events = new ArrayList<>();
+                while((Map) doc.get("Event " + i) != null){
+                    Map <String, String> t = (Map) doc.get("Event " + i);
+                    events.add(new Event(t.get("name")));
+                    i++;
+                }
+                topicArrayList.add(new Topic(name, desc, events));
             }
         }
         return topicArrayList;
