@@ -32,6 +32,7 @@ public class FocusFragment extends Fragment {
         eventView.setText(e.getName());
         subjView.setText(e.getTopic().getName());
 
+        //code for timer thing
         //your code here
         long diff=1;
         try {
