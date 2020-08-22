@@ -2,6 +2,7 @@ package com.onenote.twonote;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +20,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class SubjectFragment extends Fragment {
+    private FloatingActionButton fab2;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_subject, container, false);
+        fab2 = v.findViewById(R.id.fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new SubjectDialog();
+                newFragment.show(getActivity().getSupportFragmentManager(), "Add topic");
+            }
+        });
         return v;
     }
 
@@ -35,10 +47,9 @@ public class SubjectFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         Map<Topic, List<Event>> eByTopic = new HashMap<>();
-        List<Topic> topics = new ArrayList<>();
-        topics.add(new Topic("Chem","Chemistry :("));
-        eByTopic.put(topics.get(0), Arrays.asList(new Event("ICA","chem??","26/07/2004 00:00",30)));
-
+        List<Topic> topics = Topic.initArrayList();
+        //topics.add(new Topic("Chem","Chemistry :("));
+        eByTopic.put(topics.get(0), Arrays.asList(new Event("ICA")));
         String c = getArguments()==null?null:(String)(getArguments().get("topic"));
         System.out.println(c);
         Topic current=null;

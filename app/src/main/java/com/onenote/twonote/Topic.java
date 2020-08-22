@@ -1,12 +1,19 @@
 package com.onenote.twonote;
 
+import android.util.Log;
+
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.*;
 
 public class Topic {
     protected String name;
     protected String description;
     protected ArrayList<Event> events;
-
+    public static ArrayList<Topic> topicArrayList = initArrayList();
     public Topic(String name, String description, Event... events){
         this.name=name;
         this.events=new ArrayList<>();
@@ -69,5 +76,35 @@ public class Topic {
             s+="\t"+(e.toString())+"\n";
         }
         return s;
+    }
+    public static ArrayList<Topic> initArrayList() {
+        ArrayList<Topic> topicArrayList = new ArrayList<>();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Task<QuerySnapshot> topicTask = db.collection("topics").get();
+        while(!topicTask.isComplete()){}
+        if(topicTask.isSuccessful()) {
+            QuerySnapshot snapshot = topicTask.getResult();
+            for (QueryDocumentSnapshot doc : snapshot) {
+                String name = doc.get("name", String.class);
+                String desc = doc.get("description", String.class);
+                int i = 1;
+                ArrayList<Event> events = new ArrayList<>();
+                while((Map) doc.get("Event " + i) != null){
+                    Map <String, String> t = (Map) doc.get("Event " + i);
+                    events.add(new Event(t.get("name")));
+                    i++;
+                }
+                topicArrayList.add(new Topic(name, desc, events));
+            }
+        }
+        return topicArrayList;
+    }
+    public static ArrayList<Topic> addToArrayList(ArrayList<Topic> topicArrayList1, Topic topic){
+        topicArrayList1.add(topic);
+        topicArrayList = topicArrayList1;
+        return topicArrayList;
+    }
+    public static ArrayList<Topic> getTopicArrayList(){
+        return topicArrayList;
     }
 }
