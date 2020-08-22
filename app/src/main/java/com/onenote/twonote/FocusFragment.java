@@ -43,7 +43,12 @@ public class FocusFragment extends Fragment {
                 int hours = (int) ((diff / (1000 * 60 * 60)) % 24);
                 int days = (int) ((diff / (1000 * 60 * 60 * 24)));
                 timerView.setText(days+" days, "+hours+" hours, "+minutes+" minutes and "+seconds+" seconds left before event"+e.getName()+"ends");
-                Thread.sleep(1000);
+                    try{
+                        Thread.sleep(1000);
+                    }
+                    catch (Exception e){
+                            System.out.println(e.getStackTrace());
+                    }
             }
         }
         catch (Exception ex){
