@@ -95,9 +95,6 @@ public class Event implements Comparable{
             System.out.println(ex.getMessage());
         }
     }
-    public void setDate(Date date){
-        this.date=date;
-    }
 
     @Override
     public int compareTo(Object o) {
@@ -136,7 +133,7 @@ public class Event implements Comparable{
                 String dt = doc.get("date and time", String.class);
                 eventArrayList.add(new Event(name, desc, dt, dur));
             }
-            Collections.sort(eventArrayList);
+//            Collections.sort(eventArrayList);
         }
         return eventArrayList;
     }

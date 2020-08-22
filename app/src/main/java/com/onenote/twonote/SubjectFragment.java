@@ -19,13 +19,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class SubjectFragment extends Fragment {
+    private FloatingActionButton fab2;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_subject, container, false);
+        fab2 = v.findViewById(R.id.fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new SubjectDialog();
+                newFragment.show(getActivity().getSupportFragmentManager(), "Add topic");
+            }
+        });
         return v;
     }
 
@@ -37,7 +49,6 @@ public class SubjectFragment extends Fragment {
         List<Topic> topics = new ArrayList<>();
         topics.add(new Topic("Chem","Chemistry :("));
         eByTopic.put(topics.get(0), Arrays.asList(new Event("ICA")));
-
         String c = getArguments()==null?null:(String)(getArguments().get("topic"));
         System.out.println(c);
         Topic current=null;
