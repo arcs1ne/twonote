@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.Date;
+import java.text.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +33,20 @@ public class FocusFragment extends Fragment {
         subjView.setText(e.getTopic().getName());
 
         //your code here
-
-        // timerView.setText(...);
+        long diff=1;
+        try {
+            while (diff>0) {
+                diff = e.getEndDate().getTime() - (new Date().getTime());
+                int seconds = (int) (diff / 1000) % 60;
+                int minutes = (int) ((diff / (1000 * 60)) % 60);
+                int hours = (int) ((diff / (1000 * 60 * 60)) % 24);
+                int days = (int) ((diff / (1000 * 60 * 60 * 24)));
+                timerView.setText(days+" days, "+hours+" hours, "+minutes+" minutes and "+seconds+" seconds left before event"+e.getName()+"ends");
+                Thread.sleep(1000);
+            }
+        }
+        catch (Exception ex){
+            System.out.println(ex.getStackTrace());
+        }
     }
 }
