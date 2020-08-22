@@ -103,7 +103,8 @@ public class SubjectFragment extends Fragment {
         Bundle b = new Bundle();
         b.putString("topic",t.name);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(this,"events");
+        ft.detach(this);
+        ft.attach(this);
         this.setArguments(b);
         ft.commit();
     }
