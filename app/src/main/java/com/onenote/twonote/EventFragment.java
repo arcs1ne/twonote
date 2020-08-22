@@ -21,11 +21,15 @@ public class EventFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Event e = new Event("ICA","Chem assignment or something lol");
+        Event e = null;
+        if (getArguments()==null) return;
+        String n = getArguments().getString("event");//new Event("ICA","Chem assignment or something lol");
+        e=Event.findEvent(n);
+        if (n==null) return;
 
         ((TextView)getActivity().findViewById(R.id.eventView)).setText(e.getName());
         ((TextView)getActivity().findViewById(R.id.descView)).setText(e.getDescription());
         ((TextView)getActivity().findViewById(R.id.dateView)).setText(e.getDate());
-        ((TextView)getActivity().findViewById(R.id.topicView)).setText("pretend Chem");
+        ((TextView)getActivity().findViewById(R.id.topicView)).setText(e.getTopic().name);
     }
 }

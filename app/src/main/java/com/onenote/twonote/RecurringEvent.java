@@ -6,16 +6,16 @@ import java.util.Date;
 public class RecurringEvent extends Event{
     protected int numRecurrence;
 
-    public RecurringEvent(String name, String description, String date, int duration, int numRecurrence){
-        super(name, description, date, duration);
+    public RecurringEvent(String name, String description, Topic topic, String date, int duration, int numRecurrence){
+        super(name, description, topic, date, duration);
         this.numRecurrence=numRecurrence;
     }
-    public RecurringEvent(String name, String description, int numRecurrence){
-        super(name, description);
+    public RecurringEvent(String name, String description, Topic topic, int numRecurrence){
+        super(name, description, topic);
         this.numRecurrence=numRecurrence;
     }
-    public RecurringEvent(String name, int numRecurrence){
-        super(name);
+    public RecurringEvent(String name, Topic topic, int numRecurrence){
+        super(name, topic);
         this.numRecurrence=numRecurrence;
     }
     public RecurringEvent(Event event, int numRecurrence){

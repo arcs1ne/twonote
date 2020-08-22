@@ -14,10 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -25,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -40,6 +39,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import static android.app.Activity.RESULT_OK;
 
 public class SubjectFragment extends Fragment {
+    private Topic current;
     private FloatingActionButton fab2, fab3;
     static final long ONE_MINUTE_IN_MILLIS=60000;//millisecs
     private Uri photoURI;
@@ -50,7 +50,10 @@ public class SubjectFragment extends Fragment {
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new SubjectDialog();
+                Bundle b = new Bundle();
+                b.putString("topic",current!=null?current.name:null);
+                DialogFragment newFragment = (current==null?new SubjectDialog():new CalendarDialog());
+                newFragment.setArguments(b);
                 newFragment.show(getActivity().getSupportFragmentManager(), "Add topic");
             }
         });
@@ -71,24 +74,20 @@ public class SubjectFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Map<Topic, List<Event>> eByTopic = new HashMap<>();
-        List<Topic> topics = Topic.initArrayList();
+        //Map<Topic, List<Event>> eByTopic = new HashMap<>();
+        List<Topic> topics = Topic.getTopicArrayList();
         //topics.add(new Topic("Chem","Chemistry :("));
-        eByTopic.put(topics.get(0), Arrays.asList(new Event("ICA")));
+        //eByTopic.put(topics.get(0), Arrays.asList(new Event("ICA",)));
         String c = getArguments()==null?null:(String)(getArguments().get("topic"));
         System.out.println(c);
-        Topic current=null;
-        for (Topic t: topics) {
-            if (t.getName().equals(c)) {
-                current=t;
-            }
-        }
+
+        current = Topic.findTopic(c);
 
         LinearLayout ll = getActivity().findViewById(R.id.linearLayout);
         ll.removeAllViews();
 
         if (current!=null) {
-            for (final Event e : eByTopic.get(current)) {
+            for (final Event e : current.events) {
                 LinearLayout cl = makeCardView(ll, getContext());
                 TextView name = new TextView(getContext());
                 TextView desc = new TextView(getContext());
@@ -100,7 +99,7 @@ public class SubjectFragment extends Fragment {
                 ((CardView)cl.getParent()).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        viewEvent(e);
+                        viewEvent(e.name);
                     }
                 });
             }
@@ -117,20 +116,22 @@ public class SubjectFragment extends Fragment {
                 ((CardView)cl.getParent()).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        reloadFragment(t);
+                        current=t;
+                        refresh();
                     }
                 });
             }
         }
     }
 
-    private void reloadFragment(Topic t) {
+    public void refresh() {
         Bundle b = new Bundle();
-        b.putString("topic",t.name);
+        b.putString("topic",current.name);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this);
         ft.attach(this);
         this.setArguments(b);
+        ft.addToBackStack("die");
         ft.commit();
     }
 
@@ -148,12 +149,13 @@ public class SubjectFragment extends Fragment {
         return cl;
     }
 
-    private void viewEvent(Event e) {
+    private void viewEvent(String e) {
         Bundle b = new Bundle();
-        b.putString("event",e.name);
+        b.putString("event",e);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.nav_host_fragment,new EventFragment());
-        this.setArguments(b);
+        Fragment f = new EventFragment();
+        f.setArguments(b);
+        ft.replace(R.id.nav_host_fragment,f).addToBackStack("View Event");
         ft.commit();
     }
 
@@ -173,11 +175,7 @@ public class SubjectFragment extends Fragment {
                 break;
         }
     }
-
-    public Event correlate(Uri photoURI){
-        ArrayList<Event> e = Event.getEventArrayList();
-        Date starttime, endtime;
-        int minutes;
+    public Event correlate(Uri photoURI) {
         ExifInterface intf = null;
         try {
             intf = new ExifInterface(photoURI.getPath());
@@ -188,18 +186,12 @@ public class SubjectFragment extends Fragment {
         if(intf == null) {
             Log.d("TAG","file not found");
         }
-
         String dateString = intf.getAttribute(ExifInterface.TAG_DATETIME);
+
         String[] str = dateString.split(" ");
         Date properDate = convert(dateString);
-        for (Event event:e){
-            starttime = event.getUnformattedDate();
-            endtime = new Date(TimeUnit.SECONDS.toMillis(starttime.getTime() + ONE_MINUTE_IN_MILLIS));
-            if (endtime.compareTo(properDate) > 0 && starttime.compareTo(properDate) < 0){
-                return event;
-            }
-        }
-        return null;
+
+        return Event.correlate(properDate);
     }
     public static Date convert(String EXIF_TAG_DATETIME){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US);
@@ -211,5 +203,7 @@ public class SubjectFragment extends Fragment {
             return null;
         }
     }
+
+
 }
 

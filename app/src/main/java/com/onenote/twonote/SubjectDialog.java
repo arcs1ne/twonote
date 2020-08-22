@@ -14,10 +14,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -34,6 +36,7 @@ import javax.security.auth.Subject;
 public class SubjectDialog extends DialogFragment{
     private Button addevent;
     private EditText eventEdit;
+    private TextView titleView;
     static ArrayList<Topic> topicArrayList = Topic.getTopicArrayList();
     private ArrayList<Event> tobeadded = new ArrayList<>();
     @Override
@@ -44,9 +47,14 @@ public class SubjectDialog extends DialogFragment{
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         View content =  inflater.inflate(R.layout.subject_dialog, null);
-        addevent = content.findViewById(R.id.addnewevent);
-        eventEdit = content.findViewById(R.id.eventname);
-        eventEdit.addTextChangedListener(new TextWatcher() {
+        /*String s = null;
+        if (getArguments()!=null) s=getArguments().getString("topic");
+        Topic topic = Topic.findTopic(s);*/
+        titleView = content.findViewById(R.id.titleView);
+        //addevent = content.findViewById(R.id.addnewevent);
+        //eventEdit = content.findViewById(R.id.eventname);
+
+        /*eventEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -66,12 +74,12 @@ public class SubjectDialog extends DialogFragment{
         addevent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tobeadded.add(new Event(eventEdit.getText().toString()));
+                tobeadded.add(new Event(eventEdit.getText().toString(),null)); //TODO
                 eventEdit.setText("");
                 addevent.setEnabled(false);
                 Toast.makeText(getContext(),"Event added", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
         builder.setView(content)
                 // Add action buttons
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -86,15 +94,19 @@ public class SubjectDialog extends DialogFragment{
                         String mdesc = b.getText().toString().trim();
                         field.put("name", mname);
                         field.put("description",mdesc);
-                        for (Event k: tobeadded){
+                        /*for (Event k: tobeadded){
                             u++;
                             field.put("Event " + u, k);
                         }
-                        Log.d("field", field+"");
-                        Topic.addToArrayList(topicArrayList, new Topic(mname,mdesc,tobeadded));
+                        Log.d("field", field+"");*/
+                        new Topic(mname,mdesc,tobeadded);
 
                         db.collection("topics").document(mname).set(field);
                         Toast.makeText(getContext(), "Successfully saved topic into system!", Toast.LENGTH_SHORT).show();
+                        System.out.println(getParentFragment());
+                        if (getParentFragment() instanceof SubjectFragment) {
+                            ((SubjectFragment)getParentFragment()).refresh();
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
